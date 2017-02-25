@@ -14,8 +14,9 @@ namespace Polyfills {
 
 // on embedded platform, favor code size over speed
 
-double pow10(int n) {
-  double result = 0;
+template <typename T>
+inline T pow10(int n) {
+  T result = 1;
   while (n > 0) {
     result *= 10;
     n--;
@@ -27,7 +28,8 @@ double pow10(int n) {
 
 // on non-embedded platform, favor speed over code size
 
-double pow10(int n) {
+template <typename T>
+inline T pow10(int n) {
   return ::pow(10, n);
 }
 

@@ -14,9 +14,9 @@ namespace Internals {
 template <typename T>
 inline T parseFloat(const char *s) {
   // 1. sign
-  T sign = +1;
+  bool negative_result = false;
   if (*s == '-') {
-    sign = -1;
+    negative_result = true;
     s++;
   } else if (*s == '+') {
     s++;
@@ -59,12 +59,12 @@ inline T parseFloat(const char *s) {
     }
 
     if (negative_exponent)
-      result /= Polyfills::pow10(exponent);
+      result /= Polyfills::pow10<T>(exponent);
     else
-      result *= Polyfills::pow10(exponent);
+      result *= Polyfills::pow10<T>(exponent);
   }
 
-  return sign * result;
+  return negative_result ? -result : result;
 }
 }
 }
