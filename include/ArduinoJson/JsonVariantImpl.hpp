@@ -8,7 +8,8 @@
 #pragma once
 
 #include "Configuration.hpp"
-#include "Data/Parse.hpp"
+#include "Data/ParseFloat.hpp"
+#include "Data/ParseInteger.hpp"
 #include "JsonArray.hpp"
 #include "JsonObject.hpp"
 #include "JsonVariant.hpp"
@@ -61,7 +62,7 @@ inline Internals::JsonInteger JsonVariant::variantAsInteger() const {
     case JSON_UNPARSED:
       if (!_content.asString) return 0;
       if (!strcmp("true", _content.asString)) return 1;
-      return parse<Internals::JsonInteger>(_content.asString);
+      return parseInteger<Internals::JsonInteger>(_content.asString);
     default:
       return static_cast<Internals::JsonInteger>(_content.asFloat);
   }
@@ -80,7 +81,7 @@ inline Internals::JsonUInt JsonVariant::asUnsignedInteger() const {
     case JSON_UNPARSED:
       if (!_content.asString) return 0;
       if (!strcmp("true", _content.asString)) return 1;
-      return parse<Internals::JsonUInt>(_content.asString);
+      return parseInteger<Internals::JsonUInt>(_content.asString);
     default:
       return static_cast<Internals::JsonUInt>(_content.asFloat);
   }
@@ -107,7 +108,7 @@ inline Internals::JsonFloat JsonVariant::variantAsFloat() const {
       return -static_cast<JsonFloat>(_content.asInteger);
     case JSON_STRING:
     case JSON_UNPARSED:
-      return _content.asString ? parse<JsonFloat>(_content.asString) : 0;
+      return _content.asString ? parseFloat<JsonFloat>(_content.asString) : 0;
     default:
       return _content.asFloat;
   }

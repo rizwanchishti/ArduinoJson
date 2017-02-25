@@ -72,19 +72,33 @@ TEST_F(JsonParser_Variant_Test, Integer) {
 }
 
 TEST_F(JsonParser_Variant_Test, Double) {
-  verify("3.14", 3.14);
-  verify("-3.14", -3.14);
-  verify("+3.14", +3.14);
-  verify("1E+10", 1E+10);
-  verify("-1E+10", -1E+10);
-  verify("1.234E10", 1.234E10);
-  verify("1.234E+10", 1.234E+10);
-  verify("1.79769e308", 1.79769e308);
-  verify("1.79769e+308", 1.79769e+308);
-  verify("-1.79769e+308", -1.79769e+308);
-  verify("1.7976931348623157e308", 1.7976931348623157e308);
-  verify("1.7976931348623157e+308", 1.7976931348623157e+308);
-  verify("0.017976931348623157e+310", 0.017976931348623157e+310);
+  verify<double>("3.14", 3.14);
+  verify<double>("-3.14", -3.14);
+  verify<double>("+3.14", +3.14);
+  verify<double>("1E+10", 1E+10);
+  verify<double>("-1E+10", -1E+10);
+  verify<double>("1.234E10", 1.234E10);
+  verify<double>("1.234E+10", 1.234E+10);
+  verify<double>("1.79769e308", 1.79769e308);
+  verify<double>("1.79769e+308", 1.79769e+308);
+  verify<double>("-1.79769e+308", -1.79769e+308);
+  verify<double>("1.7976931348623157e308", 1.7976931348623157e308);
+  verify<double>("1.7976931348623157e+308", 1.7976931348623157e+308);
+  verify<double>("0.017976931348623157e+310", 0.017976931348623157e+310);
+}
+
+TEST_F(JsonParser_Variant_Test, Float) {
+  verify<float>("3.14", 3.14f);
+  verify<float>("-3.14", -3.14f);
+  verify<float>("+3.14", +3.14f);
+  verify<float>("1E+10", 1E+10f);
+  verify<float>("-1E+10", -1E+10f);
+  verify<float>("1.234E10", 1.234E10f);
+  verify<float>("1.234E+10", 1.234E+10f);
+  verify<float>("1.175494e-38", 1.175494e-38f);  // min
+  verify<float>("-1.175494e-38", -1.175494e-38f);
+  verify<float>("3.402823e+38", 3.402823e+38f);  // max
+  verify<float>("-3.402823e+38", -3.402823e+38f);
 }
 
 TEST_F(JsonParser_Variant_Test, String) {
