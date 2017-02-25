@@ -15,13 +15,79 @@ template <typename TFloat>
 TFloat parse(const char *);
 
 template <>
-inline float parse<float>(const char *s) {
-  return static_cast<float>(strtod(s, NULL));
+inline double parse<double>(const char *s) {
+  double result = 0.0;
+  double factor = 1.0;
+  bool exp_factor = 1;  // default 1 - positive exponent. Use 0 for negative
+  double exponent = 0;
+  double multiplier = 1;  // multiplier for exponent
+  bool decimals = false;
+  char c;
+
+  if (*s == '\0') return NAN;
+
+  if (*s == '-') {
+    factor = -1;
+    s++;
+  } else if (*s == '+') {
+    s++;
+  }
+
+  while ((c = *s)) {
+    if (c == '.') {
+      decimals = true;
+      s++;
+      continue;
+    }
+
+    if (c == 'e' || c == 'E') {
+      s++;
+      if (*s == '-') {
+        exp_factor = 0;
+        s++;
+      } else if (*s == '+') {
+        s++;
+      }
+      while ((c = *s) != '\0') {  // this while loop for the exponent
+        int d = c - '0';
+        if (d < 0 || d > 9) {
+          break;
+        }
+        exponent = exponent * 10 + d;
+        s++;
+      }
+    }
+
+    else {
+      int d = c - '0';
+      if (d < 0 || d > 9) {
+        break;
+      }
+
+      result = 10.0 * result + d;
+      if (decimals) {
+        factor *= 0.1;
+      }
+
+      s++;
+    }
+  }
+  result *= factor;
+
+  if (exponent) {
+    multiplier = pow(10, exponent);
+    if (exp_factor)
+      result *= multiplier;
+    else
+      result /= multiplier;
+  }
+
+  return result;
 }
 
 template <>
-inline double parse<double>(const char *s) {
-  return strtod(s, NULL);
+inline float parse<float>(const char *s) {
+  return static_cast<float>(parse<double>(s));
 }
 
 template <>
