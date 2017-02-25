@@ -1,6 +1,11 @@
 ArduinoJson: change log
 =======================
 
+HEAD
+----
+
+* Added custom implentations of `strtod()` (issue #453)
+
 v5.8.3
 ------
 
