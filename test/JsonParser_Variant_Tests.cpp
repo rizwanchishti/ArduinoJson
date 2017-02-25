@@ -73,7 +73,8 @@ TEST_F(JsonParser_Variant_Test, Integer) {
 
 TEST_F(JsonParser_Variant_Test, Double) {
   verify("3.14", 3.14);
-  verify("3.14", 3.14);
+  verify("-3.14", -3.14);
+  verify("+3.14", +3.14);
   verify("1E+10", 1E+10);
   verify("-1E+10", -1E+10);
   verify("1.234E10", 1.234E10);

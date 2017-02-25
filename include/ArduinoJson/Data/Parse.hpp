@@ -8,6 +8,7 @@
 #pragma once
 
 #include <stdlib.h>
+#include "../Polyfills/pow10.hpp"
 
 namespace ArduinoJson {
 namespace Internals {
@@ -16,9 +17,8 @@ TFloat parse(const char *);
 
 template <>
 inline double parse<double>(const char *s) {
-  double result = 0.0;
+  // 1. sign
   double sign = +1;
-
   if (*s == '-') {
     sign = -1;
     s++;
@@ -27,6 +27,7 @@ inline double parse<double>(const char *s) {
   }
 
   // 2. integer part
+  double result = 0.0;
   while ('0' <= *s && *s <= '9') {
     result = result * 10 + (*s - '0');
     s++;
@@ -60,13 +61,11 @@ inline double parse<double>(const char *s) {
       exponent = exponent * 10 + (*s - '0');
       s++;
     }
-    while (exponent > 0) {
-      if (negative_exponent)
-        result /= 10;
-      else
-        result *= 10;
-      exponent--;
-    }
+
+    if (negative_exponent)
+      result /= Polyfills::pow10(exponent);
+    else
+      result *= Polyfills::pow10(exponent);
   }
 
   return sign * result;
