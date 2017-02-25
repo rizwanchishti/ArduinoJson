@@ -17,6 +17,10 @@ namespace Polyfills {
 template <typename T>
 inline T pow10(int n) {
   T result = 1;
+  while (n < 0) {
+    result /= 10;
+    n++;
+  }
   while (n > 0) {
     result *= 10;
     n--;

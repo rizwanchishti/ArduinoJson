@@ -24,6 +24,10 @@ class JsonParser_Variant_Test : public testing::Test {
     EXPECT_STREQ(expected, _result.as<char*>());
   }
 
+  void resultMustEqual(float expected) {
+    EXPECT_FLOAT_EQ(expected, _result.as<float>());
+  }
+
   void resultMustEqual(double expected) {
     EXPECT_DOUBLE_EQ(expected, _result.as<double>());
   }
@@ -82,6 +86,7 @@ TEST_F(JsonParser_Variant_Test, Double) {
   verify<double>("1.79769e308", 1.79769e308);
   verify<double>("1.79769e+308", 1.79769e+308);
   verify<double>("-1.79769e+308", -1.79769e+308);
+  verify<double>("1.7976931348623157", 1.7976931348623157);
   verify<double>("1.7976931348623157e308", 1.7976931348623157e308);
   verify<double>("1.7976931348623157e+308", 1.7976931348623157e+308);
   verify<double>("0.017976931348623157e+310", 0.017976931348623157e+310);

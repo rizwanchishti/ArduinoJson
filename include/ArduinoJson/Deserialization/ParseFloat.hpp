@@ -22,28 +22,25 @@ inline T parseFloat(const char *s) {
     s++;
   }
 
-  // 2. integer part
-  T result = 0.0;
+  uint64_t mantissa = 0;
   while ('0' <= *s && *s <= '9') {
-    result = result * 10 + (*s - '0');
+    mantissa = mantissa * 10UL + (*s - '0');
     s++;
   }
 
-  // 3. decimal part
+  int decimalsPlaces = 0;
   if (*s == '.') {
     s++;
-    T factor = 0.1;
     while ('0' <= *s && *s <= '9') {
-      result += factor * (*s - '0');
-      factor /= 10;
+      mantissa = mantissa * 10 + (*s - '0');
       s++;
+      decimalsPlaces++;
     }
   }
 
-  // 4. exponentation
+  int exponent = 0;
   if (*s == 'e' || *s == 'E') {
     s++;
-
     bool negative_exponent = false;
     if (*s == '-') {
       negative_exponent = true;
@@ -52,17 +49,16 @@ inline T parseFloat(const char *s) {
       s++;
     }
 
-    int exponent = 0;
     while ('0' <= *s && *s <= '9') {
       exponent = exponent * 10 + (*s - '0');
       s++;
     }
 
-    if (negative_exponent)
-      result /= Polyfills::pow10<T>(exponent);
-    else
-      result *= Polyfills::pow10<T>(exponent);
+    if (negative_exponent) exponent = -exponent;
   }
+
+  T result =
+      static_cast<T>(mantissa) * Polyfills::pow10<T>(exponent - decimalsPlaces);
 
   return negative_result ? -result : result;
 }
