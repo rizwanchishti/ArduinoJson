@@ -8,8 +8,8 @@
 #pragma once
 
 #include "Configuration.hpp"
-#include "Data/ParseFloat.hpp"
-#include "Data/ParseInteger.hpp"
+#include "Deserialization/ParseFloat.hpp"
+#include "Deserialization/ParseInteger.hpp"
 #include "JsonArray.hpp"
 #include "JsonObject.hpp"
 #include "JsonVariant.hpp"
