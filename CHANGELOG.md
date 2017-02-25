@@ -5,6 +5,7 @@ HEAD
 ----
 
 * Added custom implentations of `strtod()` (issue #453)
+* Added `ARDUINOJSON_OPTIMIZE_SIZE`
 
 v5.8.3
 ------
