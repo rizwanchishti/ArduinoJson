@@ -17,72 +17,59 @@ TFloat parse(const char *);
 template <>
 inline double parse<double>(const char *s) {
   double result = 0.0;
-  double factor = 1.0;
-  bool exp_factor = 1;  // default 1 - positive exponent. Use 0 for negative
-  double exponent = 0;
-  double multiplier = 1;  // multiplier for exponent
-  bool decimals = false;
-  char c;
-
-  if (*s == '\0') return NAN;
+  double sign = +1;
 
   if (*s == '-') {
-    factor = -1;
+    sign = -1;
     s++;
   } else if (*s == '+') {
     s++;
   }
 
-  while ((c = *s)) {
-    if (c == '.') {
-      decimals = true;
-      s++;
-      continue;
-    }
+  // 2. integer part
+  while ('0' <= *s && *s <= '9') {
+    result = result * 10 + (*s - '0');
+    s++;
+  }
 
-    if (c == 'e' || c == 'E') {
-      s++;
-      if (*s == '-') {
-        exp_factor = 0;
-        s++;
-      } else if (*s == '+') {
-        s++;
-      }
-      while ((c = *s) != '\0') {  // this while loop for the exponent
-        int d = c - '0';
-        if (d < 0 || d > 9) {
-          break;
-        }
-        exponent = exponent * 10 + d;
-        s++;
-      }
-    }
-
-    else {
-      int d = c - '0';
-      if (d < 0 || d > 9) {
-        break;
-      }
-
-      result = 10.0 * result + d;
-      if (decimals) {
-        factor *= 0.1;
-      }
-
+  // 3. decimal part
+  if (*s == '.') {
+    s++;
+    double factor = 0.1;
+    while ('0' <= *s && *s <= '9') {
+      result += factor * (*s - '0');
+      factor /= 10;
       s++;
     }
   }
-  result *= factor;
 
-  if (exponent) {
-    multiplier = pow(10, exponent);
-    if (exp_factor)
-      result *= multiplier;
-    else
-      result /= multiplier;
+  // 4. exponentation
+  if (*s == 'e' || *s == 'E') {
+    s++;
+
+    bool negative_exponent = false;
+    if (*s == '-') {
+      negative_exponent = true;
+      s++;
+    } else if (*s == '+') {
+      s++;
+    }
+
+    int exponent = 0;
+    while ('0' <= *s && *s <= '9') {
+      exponent = exponent * 10 + (*s - '0');
+      s++;
+    }
+    while (exponent > 0) {
+      if (negative_exponent)
+        result /= 10;
+      else
+        result *= 10;
+      exponent--;
+    }
   }
 
-  return result;
+  return sign * result;
 }
 
 template <>
