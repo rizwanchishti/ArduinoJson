@@ -28,7 +28,7 @@ inline T pow10(int n) {
 
 template <typename T>
 inline T pow10(int n) {
-  return ::pow(10, n);
+  return ::pow(static_cast<T>(10), n);
 }
 
 #endif
