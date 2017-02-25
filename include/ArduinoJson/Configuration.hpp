@@ -14,6 +14,11 @@
 
 #ifdef ARDUINO  // assume this is an embedded platform
 
+// make the code as small as possible
+#ifndef ARDUINOJSON_OPTIMIZE_SIZE
+#define ARDUINOJSON_OPTIMIZE_SIZE 1
+#endif
+
 // store using float instead of double to reduce the memory usage (issue #134)
 #ifndef ARDUINOJSON_USE_DOUBLE
 #define ARDUINOJSON_USE_DOUBLE 0
@@ -71,6 +76,11 @@
 #endif
 
 #else  // assume this is a computer
+
+// make the code as fast as possible
+#ifndef ARDUINOJSON_OPTIMIZE_SIZE
+#define ARDUINOJSON_OPTIMIZE_SIZE 0
+#endif
 
 // on a computer we have plenty of memory so we can use doubles
 #ifndef ARDUINOJSON_USE_DOUBLE
