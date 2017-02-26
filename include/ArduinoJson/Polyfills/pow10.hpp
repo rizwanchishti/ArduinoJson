@@ -42,6 +42,11 @@ float pow10<float>(float value, int n) {
   return value * ::powf(10.0f, n);
 }
 
+template <>
+double pow10<double>(double value, int n) {
+  return value * ::pow(10.0, n);
+}
+
 #endif
 
 #endif
