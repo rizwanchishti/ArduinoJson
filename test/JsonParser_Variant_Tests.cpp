@@ -5,6 +5,7 @@
 // https://github.com/bblanchon/ArduinoJson
 // If you like this project, please add a star!
 
+#define ARDUINOJSON_OPTIMIZE_SIZE 1
 #include <ArduinoJson.h>
 #include <gtest/gtest.h>
 
