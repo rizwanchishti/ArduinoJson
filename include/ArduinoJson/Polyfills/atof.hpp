@@ -10,19 +10,19 @@
 #include "../TypeTraits/IntegerTypes.hpp"
 
 namespace ArduinoJson {
-namespace Internals {
+namespace Polyfills {
 
-#if ARDUINOJSON_USE_ATOF
+#if ARDUINOJSON_REPLACE_ATOF
 
 template <typename T>
-inline T parseFloat(const char *s) {
+inline T atof(const char *s) {
   return static_cast<T>(::atof(s));
 }
 
 #else
 
 template <typename T>
-inline T parseFloat(const char *s) {
+inline T atof(const char *s) {
   typedef typename TypeTraits::uint<sizeof(T)>::type mantissa_t;
   typedef typename TypeTraits::sint<sizeof(T) / 4>::type exponent_t;
 

@@ -8,11 +8,11 @@
 #pragma once
 
 #include "Configuration.hpp"
-#include "Deserialization/ParseFloat.hpp"
 #include "Deserialization/ParseInteger.hpp"
 #include "JsonArray.hpp"
 #include "JsonObject.hpp"
 #include "JsonVariant.hpp"
+#include "Polyfills/atof.hpp"
 
 #include <errno.h>   // for errno
 #include <stdlib.h>  // for strtol, strtod
@@ -108,7 +108,8 @@ inline Internals::JsonFloat JsonVariant::variantAsFloat() const {
       return -static_cast<JsonFloat>(_content.asInteger);
     case JSON_STRING:
     case JSON_UNPARSED:
-      return _content.asString ? parseFloat<JsonFloat>(_content.asString) : 0;
+      return _content.asString ? Polyfills::atof<JsonFloat>(_content.asString)
+                               : 0;
     default:
       return _content.asFloat;
   }

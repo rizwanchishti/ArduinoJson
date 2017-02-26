@@ -5,7 +5,7 @@
 // https://github.com/bblanchon/ArduinoJson
 // If you like this project, please add a star!
 
-#define ARDUINOJSON_USE_ATOF 0  // test our custom parser
+#define ARDUINOJSON_REPLACE_ATOF 1  // test our custom parser
 #include <ArduinoJson.h>
 #include <gtest/gtest.h>
 

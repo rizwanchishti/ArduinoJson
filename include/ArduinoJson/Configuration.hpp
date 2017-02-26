@@ -15,8 +15,8 @@
 #ifdef ARDUINO  // assume this is an embedded platform
 
 // don't use atof() because it's often fat a sometimes buggy (issue #453)
-#ifndef ARDUINOJSON_USE_ATOF
-#define ARDUINOJSON_USE_ATOF 0
+#ifndef ARDUINOJSON_REPLACE_ATOF
+#define ARDUINOJSON_REPLACE_ATOF 1
 #endif
 
 // store using float instead of double to reduce the memory usage (issue #134)
@@ -77,9 +77,9 @@
 
 #else  // assume this is a computer
 
-// use atof() to parse float
-#ifndef ARDUINOJSON_USE_ATOF
-#define ARDUINOJSON_USE_ATOF 1
+// on a computer atof() is properly implemented
+#ifndef ARDUINOJSON_REPLACE_ATOF
+#define ARDUINOJSON_REPLACE_ATOF 0
 #endif
 
 // on a computer we have plenty of memory so we can use doubles
