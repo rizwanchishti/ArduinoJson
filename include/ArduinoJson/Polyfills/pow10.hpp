@@ -29,22 +29,19 @@ inline T pow10(T value, int n) {
 
 #else  // optimize for speed
 
-template <typename T>
-T pow10(T value, int n) {
-  return value * ::pow(10, n);
-}
-
 // If Visual Studo <= 2010
 #if defined(_MSC_VER) && _MSC_VER <= 1600
 
-template <>
-float pow10<float>(float value, int n) {
-  return value * ::powf(10.0f, n);
+template <typename T>
+T pow10(T value, int n) {
+  return value * ::pow(static_cast<T>(10), static_cast<T>(n));
 }
 
-template <>
-double pow10<double>(double value, int n) {
-  return value * ::pow(10.0, n);
+#else
+
+template <typename T>
+T pow10(T value, int n) {
+  return value * ::pow(10, n);
 }
 
 #endif
