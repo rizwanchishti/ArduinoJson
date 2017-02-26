@@ -7,11 +7,20 @@
 
 #pragma once
 
-#include "../Polyfills/pow10.hpp"
 #include "../TypeTraits/IntegerTypes.hpp"
 
 namespace ArduinoJson {
 namespace Internals {
+
+#if ARDUINOJSON_USE_ATOF
+
+template <typename T>
+inline T parseFloat(const char *s) {
+  return static_cast<T>(::atof(s));
+}
+
+#else
+
 template <typename T>
 inline T parseFloat(const char *s) {
   typedef typename TypeTraits::uint<sizeof(T)>::type mantissa_t;
@@ -60,11 +69,29 @@ inline T parseFloat(const char *s) {
 
     if (negative_exponent) exponent = static_cast<exponent_t>(-exponent);
   }
+  exponent = static_cast<exponent_t>(exponent - decimalsPlaces);
 
-  T result =
-      Polyfills::pow10(static_cast<T>(mantissa), exponent - decimalsPlaces);
+  T result = static_cast<T>(mantissa);
+  while (exponent >= 4) {
+    result *= 1e4;
+    exponent = static_cast<exponent_t>(exponent - 4);
+  }
+  while (exponent > 0) {
+    result *= 10;
+    exponent--;
+  }
+  while (exponent < 0) {
+    result /= 10;
+    exponent++;
+  }
+  while (exponent <= -4) {
+    result /= 1e4;
+    exponent = static_cast<exponent_t>(exponent + 4);
+  }
 
   return negative_result ? -result : result;
 }
+
+#endif
 }
 }

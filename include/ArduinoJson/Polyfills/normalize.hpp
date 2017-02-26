@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include "../Configuration.hpp"
-
 namespace ArduinoJson {
 namespace Polyfills {
 
-#if ARDUINOJSON_OPTIMIZE_SIZE
+#ifdef ARDUINO
+
+// on embedded platform, favor code size over speed
 
 template <typename T>
 short normalize(T& value) {
@@ -28,7 +28,9 @@ short normalize(T& value) {
   return powersOf10;
 }
 
-#else  // optimize for speed
+#else
+
+// on non-embedded platform, favor speed over code size
 
 template <typename T>
 short normalize(T& value) {

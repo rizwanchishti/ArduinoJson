@@ -8,7 +8,6 @@
 #pragma once
 
 #include <stdlib.h>
-#include "../Polyfills/pow10.hpp"
 
 namespace ArduinoJson {
 namespace Internals {
