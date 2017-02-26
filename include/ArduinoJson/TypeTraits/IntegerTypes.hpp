@@ -14,6 +14,16 @@ template <size_t Size>
 struct uint {};
 
 template <>
+struct uint<1> {
+  typedef uint8_t type;
+};
+
+template <>
+struct uint<2> {
+  typedef uint16_t type;
+};
+
+template <>
 struct uint<4> {
   typedef uint32_t type;
 };
@@ -34,6 +44,16 @@ struct sint<1> {
 template <>
 struct sint<2> {
   typedef int16_t type;
+};
+
+template <>
+struct sint<4> {
+  typedef int32_t type;
+};
+
+template <>
+struct sint<8> {
+  typedef int64_t type;
 };
 }
 }
