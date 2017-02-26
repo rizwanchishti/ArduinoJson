@@ -62,7 +62,7 @@ inline T parseFloat(const char *s) {
   }
 
   T result =
-      static_cast<T>(mantissa) * Polyfills::pow10<T>(exponent - decimalsPlaces);
+      Polyfills::pow10(static_cast<T>(mantissa), exponent - decimalsPlaces);
 
   return negative_result ? -result : result;
 }
