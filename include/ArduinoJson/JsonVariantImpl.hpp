@@ -8,11 +8,11 @@
 #pragma once
 
 #include "Configuration.hpp"
-#include "Deserialization/ParseInteger.hpp"
 #include "JsonArray.hpp"
 #include "JsonObject.hpp"
 #include "JsonVariant.hpp"
 #include "Polyfills/atof.hpp"
+#include "Polyfills/atoi.hpp"
 
 #include <errno.h>   // for errno
 #include <stdlib.h>  // for strtol, strtod
@@ -57,14 +57,14 @@ inline Internals::JsonInteger JsonVariant::variantAsInteger() const {
     case JSON_BOOLEAN:
       return _content.asInteger;
     case JSON_NEGATIVE_INTEGER:
-      return -static_cast<Internals::JsonInteger>(_content.asInteger);
+      return -static_cast<JsonInteger>(_content.asInteger);
     case JSON_STRING:
     case JSON_UNPARSED:
       if (!_content.asString) return 0;
       if (!strcmp("true", _content.asString)) return 1;
-      return parseInteger<Internals::JsonInteger>(_content.asString);
+      return Polyfills::atoi<JsonInteger>(_content.asString);
     default:
-      return static_cast<Internals::JsonInteger>(_content.asFloat);
+      return static_cast<JsonInteger>(_content.asFloat);
   }
 }
 
@@ -81,9 +81,9 @@ inline Internals::JsonUInt JsonVariant::asUnsignedInteger() const {
     case JSON_UNPARSED:
       if (!_content.asString) return 0;
       if (!strcmp("true", _content.asString)) return 1;
-      return parseInteger<Internals::JsonUInt>(_content.asString);
+      return Polyfills::atoi<JsonUInt>(_content.asString);
     default:
-      return static_cast<Internals::JsonUInt>(_content.asFloat);
+      return static_cast<JsonUInt>(_content.asFloat);
   }
 }
 
