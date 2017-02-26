@@ -15,6 +15,7 @@ namespace Internals {
 template <typename T>
 inline T parseFloat(const char *s) {
   typedef typename TypeTraits::uint<sizeof(T)>::type mantissa_t;
+  typedef typename TypeTraits::sint<sizeof(T) / 4>::type exponent_t;
 
   // 1. sign
   bool negative_result = false;
@@ -31,7 +32,7 @@ inline T parseFloat(const char *s) {
     s++;
   }
 
-  int decimalsPlaces = 0;
+  exponent_t decimalsPlaces = 0;
   if (*s == '.') {
     s++;
     while ('0' <= *s && *s <= '9') {
@@ -41,7 +42,7 @@ inline T parseFloat(const char *s) {
     }
   }
 
-  int exponent = 0;
+  exponent_t exponent = 0;
   if (*s == 'e' || *s == 'E') {
     s++;
     bool negative_exponent = false;
@@ -53,11 +54,11 @@ inline T parseFloat(const char *s) {
     }
 
     while ('0' <= *s && *s <= '9') {
-      exponent = exponent * 10 + (*s - '0');
+      exponent = static_cast<exponent_t>(exponent * 10 + (*s - '0'));
       s++;
     }
 
-    if (negative_exponent) exponent = -exponent;
+    if (negative_exponent) exponent = static_cast<exponent_t>(-exponent);
   }
 
   T result =
