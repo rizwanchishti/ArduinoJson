@@ -31,9 +31,19 @@ inline T pow10(int n) {
 #else  // optimize for speed
 
 template <typename T>
-inline T pow10(int n) {
-  return ::pow(static_cast<T>(10), n);
+T pow10(int n) {
+  return ::pow(10, n);
 }
+
+// If Visual Studo <= 2010
+#if defined(_MSC_VER) && _MSC_VER <= 1600
+
+template <>
+float pow10<float>(int n) {
+  return ::powf(10.0f, n);
+}
+
+#endif
 
 #endif
 }
