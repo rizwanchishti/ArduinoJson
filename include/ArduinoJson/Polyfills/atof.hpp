@@ -16,13 +16,6 @@ namespace Polyfills {
 
 template <typename T>
 inline T atof(const char *s) {
-  return static_cast<T>(::atof(s));
-}
-
-#else
-
-template <typename T>
-inline T atof(const char *s) {
   typedef typename TypeTraits::uint<sizeof(T)>::type mantissa_t;
   typedef typename TypeTraits::sint<sizeof(T) / 4>::type exponent_t;
 
@@ -76,6 +69,10 @@ inline T atof(const char *s) {
     result *= 1e4;
     exponent = static_cast<exponent_t>(exponent - 4);
   }
+  while (exponent <= -4) {
+    result /= 1e4;
+    exponent = static_cast<exponent_t>(exponent + 4);
+  }
   while (exponent > 0) {
     result *= 10;
     exponent--;
@@ -84,12 +81,15 @@ inline T atof(const char *s) {
     result /= 10;
     exponent++;
   }
-  while (exponent <= -4) {
-    result /= 1e4;
-    exponent = static_cast<exponent_t>(exponent + 4);
-  }
 
   return negative_result ? -result : result;
+}
+
+#else
+
+template <typename T>
+inline T atof(const char *s) {
+  return -static_cast<T>(::atof(s));
 }
 
 #endif

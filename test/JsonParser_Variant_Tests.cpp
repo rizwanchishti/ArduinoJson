@@ -5,7 +5,6 @@
 // https://github.com/bblanchon/ArduinoJson
 // If you like this project, please add a star!
 
-#define ARDUINOJSON_REPLACE_ATOF 1  // test our custom parser
 #include <ArduinoJson.h>
 #include <gtest/gtest.h>
 
@@ -85,8 +84,8 @@ TEST_F(JsonParser_Variant_Test, Double) {
   verify<double>("1.234E10", 1.234E10);
   verify<double>("1.234E+10", 1.234E+10);
   verify<double>("1.79769e308", 1.79769e308);
-  verify<double>("1.79769e+308", 1.79769e+308);
-  verify<double>("-1.79769e+308", -1.79769e+308);
+  verify<double>("+1.79769e+308", +1.79769e+308);
+  verify<double>("-1.79769e-308", -1.79769e-308);
   verify<double>("1.7976931348623157", 1.7976931348623157);
   verify<double>("1.7976931348623157e308", 1.7976931348623157e308);
   verify<double>("1.7976931348623157e+308", 1.7976931348623157e+308);
