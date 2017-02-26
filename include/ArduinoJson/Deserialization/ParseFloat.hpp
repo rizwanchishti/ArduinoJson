@@ -8,11 +8,14 @@
 #pragma once
 
 #include "../Polyfills/pow10.hpp"
+#include "../TypeTraits/IntegerTypes.hpp"
 
 namespace ArduinoJson {
 namespace Internals {
 template <typename T>
 inline T parseFloat(const char *s) {
+  typedef typename TypeTraits::uint<sizeof(T)>::type mantissa_t;
+
   // 1. sign
   bool negative_result = false;
   if (*s == '-') {
@@ -22,7 +25,7 @@ inline T parseFloat(const char *s) {
     s++;
   }
 
-  uint64_t mantissa = 0;
+  mantissa_t mantissa = 0;
   while ('0' <= *s && *s <= '9') {
     mantissa = mantissa * 10UL + (*s - '0');
     s++;
