@@ -29,49 +29,56 @@ inline T atof(const char *s) {
   }
 
   mantissa_t mantissa = 0;
+  exponent_t exponent = 0;
+
   while ('0' <= *s && *s <= '9') {
-    mantissa = mantissa * 10UL + (*s - '0');
+    if (mantissa < 1e12)
+      mantissa = mantissa * 10UL + (*s - '0');
+    else
+      exponent++;
     s++;
   }
 
-  exponent_t decimalsPlaces = 0;
   if (*s == '.') {
     s++;
     while ('0' <= *s && *s <= '9') {
       mantissa = mantissa * 10 + (*s - '0');
       s++;
-      decimalsPlaces++;
+      exponent--;
     }
   }
 
-  exponent_t exponent = 0;
   if (*s == 'e' || *s == 'E') {
     s++;
-    bool negative_exponent = false;
+    exponent_t accumulator = 0;
+    bool negative = false;
     if (*s == '-') {
-      negative_exponent = true;
+      negative = true;
       s++;
     } else if (*s == '+') {
       s++;
     }
 
     while ('0' <= *s && *s <= '9') {
-      exponent = static_cast<exponent_t>(exponent * 10 + (*s - '0'));
+      accumulator = static_cast<exponent_t>(accumulator * 10 + (*s - '0'));
       s++;
     }
 
-    if (negative_exponent) exponent = static_cast<exponent_t>(-exponent);
+    if (negative) {
+      exponent = static_cast<exponent_t>(exponent - accumulator);
+    } else {
+      exponent = static_cast<exponent_t>(exponent + accumulator);
+    }
   }
-  exponent = static_cast<exponent_t>(exponent - decimalsPlaces);
 
   T result = static_cast<T>(mantissa);
-  while (exponent >= 4) {
-    result *= 1e4;
-    exponent = static_cast<exponent_t>(exponent - 4);
+  while (exponent >= 8) {
+    result *= 1e8;
+    exponent = static_cast<exponent_t>(exponent - 8);
   }
-  while (exponent <= -4) {
-    result /= 1e4;
-    exponent = static_cast<exponent_t>(exponent + 4);
+  while (exponent <= -8) {
+    result /= 1e8;
+    exponent = static_cast<exponent_t>(exponent + 8);
   }
   while (exponent > 0) {
     result *= 10;
