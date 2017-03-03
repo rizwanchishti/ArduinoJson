@@ -12,6 +12,23 @@
 namespace ArduinoJson {
 namespace Polyfills {
 
+double pow10(double value, int n) {
+  double table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
+
+  if (n >= 0) {
+    for (int i = 0; n > 0 && i < 9; i++, n >>= 1) {
+      if (n & 1) value *= table[i];
+    }
+  } else {
+    n = -n;
+    for (int i = 0; n > 0 && i < 9; i++, n >>= 1) {
+      if (n & 1) value /= table[i];
+    }
+  }
+
+  return value;
+}
+
 #if ARDUINOJSON_REPLACE_ATOF
 
 template <typename T>
@@ -71,23 +88,7 @@ inline T atof(const char *s) {
     }
   }
 
-  T result = static_cast<T>(mantissa);
-  while (exponent >= 8) {
-    result *= 1e8;
-    exponent = static_cast<exponent_t>(exponent - 8);
-  }
-  while (exponent <= -8) {
-    result /= 1e8;
-    exponent = static_cast<exponent_t>(exponent + 8);
-  }
-  while (exponent > 0) {
-    result *= 10;
-    exponent--;
-  }
-  while (exponent < 0) {
-    result /= 10;
-    exponent++;
-  }
+  T result = pow10(static_cast<T>(mantissa), exponent);
 
   return negative_result ? -result : result;
 }
