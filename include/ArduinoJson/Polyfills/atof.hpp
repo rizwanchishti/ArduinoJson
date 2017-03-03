@@ -12,21 +12,23 @@
 namespace ArduinoJson {
 namespace Polyfills {
 
-double pow10(double value, int n) {
-  double table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
+template <typename TResult, typename TMantissa, typename TExponent>
+TResult make_float(TMantissa mantissa, TExponent exponent) {
+  TResult table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
+  TResult result = static_cast<TResult>(mantissa);
 
-  if (n >= 0) {
-    for (int i = 0; n > 0 && i < 9; i++, n >>= 1) {
-      if (n & 1) value *= table[i];
+  if (exponent >= 0) {
+    for (uint8_t i = 0; exponent > 0 && i < 9; i++, exponent /= 2) {
+      if (exponent & 1) result *= table[i];
     }
   } else {
-    n = -n;
-    for (int i = 0; n > 0 && i < 9; i++, n >>= 1) {
-      if (n & 1) value /= table[i];
+    exponent = static_cast<TExponent>(-exponent);
+    for (uint8_t i = 0; exponent > 0 && i < 9; i++, exponent /= 2) {
+      if (exponent & 1) result /= table[i];
     }
   }
 
-  return value;
+  return result;
 }
 
 #if ARDUINOJSON_REPLACE_ATOF
@@ -88,7 +90,7 @@ inline T atof(const char *s) {
     }
   }
 
-  T result = pow10(static_cast<T>(mantissa), exponent);
+  T result = make_float<T>(mantissa, exponent);
 
   return negative_result ? -result : result;
 }
