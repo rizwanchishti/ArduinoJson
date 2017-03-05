@@ -14,6 +14,10 @@ namespace Polyfills {
 
 #if ARDUINOJSON_REPLACE_ATOF
 
+#ifdef _MSC_VER
+#define strcasecmp stricmp
+#endif
+
 template <typename TResult, typename TMantissa, typename TExponent>
 TResult make_float(TMantissa mantissa, TExponent exponent) {
   TResult table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
@@ -34,17 +38,21 @@ TResult make_float(TMantissa mantissa, TExponent exponent) {
 }
 
 template <typename T>
-inline T atof(const char *s) {
+inline bool parseFloat(const char* s, T* result) {
   typedef typename TypeTraits::uint<sizeof(T)>::type mantissa_t;
   typedef typename TypeTraits::sint<sizeof(T) / 4>::type exponent_t;
 
-  // 1. sign
   bool negative_result = false;
-  if (*s == '-') {
-    negative_result = true;
-    s++;
-  } else if (*s == '+') {
-    s++;
+  switch (*s) {
+    case '-':
+      negative_result = true;
+    case '+':
+      s++;
+  }
+
+  if (!strcmp(s, "NaN")) {
+    *result = NAN;
+    return true;
   }
 
   mantissa_t mantissa = 0;
@@ -90,16 +98,20 @@ inline T atof(const char *s) {
     }
   }
 
-  T result = make_float<T>(mantissa, exponent);
+  *result = make_float<T>(mantissa, exponent);
+  if (negative_result) *result = -*result;
 
-  return negative_result ? -result : result;
+  return *s == '\0';
 }
 
 #else
 
 template <typename T>
-inline T atof(const char *s) {
-  return static_cast<T>(::atof(s));
+inline bool parseFloat(const char *input, double *result) {
+  char *end;
+  errno = 0;
+  strtod(_content.asString, &end);
+  return *end == '\0' && errno == 0;
 }
 
 #endif

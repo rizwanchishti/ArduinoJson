@@ -25,11 +25,19 @@ class JsonParser_Variant_Tests : public testing::Test {
   }
 
   void resultMustEqual(float expected) {
-    EXPECT_FLOAT_EQ(expected, _result.as<float>());
+    float actual = _result.as<float>();
+    if (expected != expected)
+      EXPECT_TRUE(actual != actual);
+    else
+      EXPECT_FLOAT_EQ(expected, actual);
   }
 
   void resultMustEqual(double expected) {
-    EXPECT_DOUBLE_EQ(expected, _result.as<double>());
+    double actual = _result.as<double>();
+    if (expected != expected)
+      EXPECT_TRUE(actual != actual);
+    else
+      EXPECT_DOUBLE_EQ(expected, actual);
   }
 
   template <typename T>
@@ -92,8 +100,8 @@ TEST_F(JsonParser_Variant_Tests, Double) {
   verify<double>("0.017976931348623157e+310", 0.017976931348623157e+310);
   verify<double>("0.00000000000000000000000000000001", 1e-32);
   verify<double>("100000000000000000000000000000000", 1e+32);
-  /*  verify<double>("NaN", NAN);
-    verify<double>("Infinity", INF);
+  verify<double>("NaN", NAN);
+  /* verify<double>("Infinity", INF);
     verify<double>("+Infinity", INF);
     verify<double>("-Infinity", -INF);*/
 }
@@ -110,6 +118,7 @@ TEST_F(JsonParser_Variant_Tests, Float) {
   verify<float>("-1.175494e-38", -1.175494e-38f);
   verify<float>("3.402823e+38", 3.402823e+38f);  // max
   verify<float>("-3.402823e+38", -3.402823e+38f);
+  verify<float>("NaN", NAN);
 }
 
 TEST_F(JsonParser_Variant_Tests, String) {
