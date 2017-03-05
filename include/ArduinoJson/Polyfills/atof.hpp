@@ -12,6 +12,8 @@
 namespace ArduinoJson {
 namespace Polyfills {
 
+#if ARDUINOJSON_REPLACE_ATOF
+
 template <typename TResult, typename TMantissa, typename TExponent>
 TResult make_float(TMantissa mantissa, TExponent exponent) {
   TResult table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
@@ -30,8 +32,6 @@ TResult make_float(TMantissa mantissa, TExponent exponent) {
 
   return result;
 }
-
-#if ARDUINOJSON_REPLACE_ATOF
 
 template <typename T>
 inline T atof(const char *s) {
@@ -99,7 +99,7 @@ inline T atof(const char *s) {
 
 template <typename T>
 inline T atof(const char *s) {
-  return -static_cast<T>(::atof(s));
+  return static_cast<T>(::atof(s));
 }
 
 #endif

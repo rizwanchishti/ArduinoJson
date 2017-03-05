@@ -69,4 +69,9 @@ add_executable(ArduinoJsonTests ${TESTS_FILES})
 target_include_directories(ArduinoJsonTests PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../include)
 target_link_libraries(ArduinoJsonTests gtest)
 
+target_compile_options(ArduinoJsonTests 
+	PRIVATE
+	-DARDUINOJSON_REPLACE_ATOF=1 # Test our own implementation of atof()
+)
+
 add_test(ArduinoJsonTests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/ArduinoJsonTests)

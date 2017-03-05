@@ -8,7 +8,7 @@
 #include <ArduinoJson.h>
 #include <gtest/gtest.h>
 
-class JsonParser_Variant_Test : public testing::Test {
+class JsonParser_Variant_Tests : public testing::Test {
  protected:
   void whenInputIs(const char* jsonString) {
     strcpy(_jsonString, jsonString);
@@ -58,24 +58,24 @@ class JsonParser_Variant_Test : public testing::Test {
   char _jsonString[256];
 };
 
-TEST_F(JsonParser_Variant_Test, EmptyObject) {
+TEST_F(JsonParser_Variant_Tests, EmptyObject) {
   whenInputIs("{}");
   resultMustBeValid();
   resultTypeMustBe<JsonObject>();
 }
 
-TEST_F(JsonParser_Variant_Test, EmptyArray) {
+TEST_F(JsonParser_Variant_Tests, EmptyArray) {
   whenInputIs("[]");
   resultMustBeValid();
   resultTypeMustBe<JsonArray>();
 }
 
-TEST_F(JsonParser_Variant_Test, Integer) {
+TEST_F(JsonParser_Variant_Tests, Integer) {
   verify("42", 42);
   verify("-42", -42);
 }
 
-TEST_F(JsonParser_Variant_Test, Double) {
+TEST_F(JsonParser_Variant_Tests, Double) {
   verify<double>("3.14", 3.14);
   verify<double>("-3.14", -3.14);
   verify<double>("+3.14", +3.14);
@@ -98,7 +98,7 @@ TEST_F(JsonParser_Variant_Test, Double) {
     verify<double>("-Infinity", -INF);*/
 }
 
-TEST_F(JsonParser_Variant_Test, Float) {
+TEST_F(JsonParser_Variant_Tests, Float) {
   verify<float>("3.14", 3.14f);
   verify<float>("-3.14", -3.14f);
   verify<float>("+3.14", +3.14f);
@@ -112,21 +112,21 @@ TEST_F(JsonParser_Variant_Test, Float) {
   verify<float>("-3.402823e+38", -3.402823e+38f);
 }
 
-TEST_F(JsonParser_Variant_Test, String) {
+TEST_F(JsonParser_Variant_Tests, String) {
   verify("\"hello world\"", "hello world");
 }
 
-TEST_F(JsonParser_Variant_Test, True) {
+TEST_F(JsonParser_Variant_Tests, True) {
   verify("true", true);
   verify("false", false);
 }
 
-TEST_F(JsonParser_Variant_Test, OpenBrace) {
+TEST_F(JsonParser_Variant_Tests, OpenBrace) {
   whenInputIs("{");
   resultMustBeInvalid();
 }
 
-TEST_F(JsonParser_Variant_Test, IncompleteStrings) {
+TEST_F(JsonParser_Variant_Tests, IncompleteStrings) {
   verify("\"", "");
   verify("\"hello", "hello");
   verify("\'", "");
