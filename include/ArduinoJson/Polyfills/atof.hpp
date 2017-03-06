@@ -24,13 +24,15 @@ TResult make_float(TMantissa mantissa, TExponent exponent) {
   TResult result = static_cast<TResult>(mantissa);
 
   if (exponent >= 0) {
-    for (uint8_t i = 0; exponent > 0 && i < 9; i++, exponent /= 2) {
+    for (uint8_t i = 0; exponent > 0 && i < 9; i++) {
       if (exponent & 1) result *= table[i];
+      exponent = static_cast<TExponent>(exponent >> 1);
     }
   } else {
     exponent = static_cast<TExponent>(-exponent);
-    for (uint8_t i = 0; exponent > 0 && i < 9; i++, exponent /= 2) {
+    for (uint8_t i = 0; exponent > 0 && i < 9; i++) {
       if (exponent & 1) result /= table[i];
+      exponent = static_cast<TExponent>(exponent >> 1);
     }
   }
 
@@ -51,7 +53,7 @@ inline bool parseFloat(const char* s, T* result) {
   }
 
   if (!strcmp(s, "NaN")) {
-    *result = NAN;
+    *result = Polyfills::nan<T>();
     return true;
   }
 

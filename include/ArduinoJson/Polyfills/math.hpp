@@ -11,6 +11,7 @@
 #if defined(_MSC_VER) && _MSC_VER <= 1700
 
 #include <float.h>
+#include <limits>
 
 namespace ArduinoJson {
 namespace Polyfills {
@@ -24,6 +25,11 @@ bool isInfinity(T x) {
   return !_finite(x);
 }
 }
+}
+
+template <typename T>
+T nan() {
+  return 0 / .0;
 }
 
 #else
@@ -100,6 +106,11 @@ inline bool isInfinity<float>(float x) {
   return isinff(x);
 }
 #endif
+
+template <typename T>
+T nan() {
+  return NAN;
+}
 
 #if defined(__GNUC__)
 #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
