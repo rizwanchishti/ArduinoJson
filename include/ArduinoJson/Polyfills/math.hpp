@@ -24,12 +24,12 @@ template <typename T>
 bool isInfinity(T x) {
   return !_finite(x);
 }
-}
-}
 
 template <typename T>
 T nan() {
   return 0 / .0;
+}
+}
 }
 
 #else
