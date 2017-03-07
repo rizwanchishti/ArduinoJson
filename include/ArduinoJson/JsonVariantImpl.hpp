@@ -98,26 +98,22 @@ inline const char *JsonVariant::variantAsString() const {
 
 inline Internals::JsonFloat JsonVariant::variantAsFloat() const {
   using namespace Internals;
-  JsonFloat value = 0;
   switch (_type) {
     case JSON_UNDEFINED:
-      break;
+      return 0;
     case JSON_POSITIVE_INTEGER:
     case JSON_BOOLEAN:
-      value = static_cast<JsonFloat>(_content.asInteger);
-      break;
+      return static_cast<JsonFloat>(_content.asInteger);
     case JSON_NEGATIVE_INTEGER:
-      value = -static_cast<JsonFloat>(_content.asInteger);
-      break;
+      return -static_cast<JsonFloat>(_content.asInteger);
     case JSON_STRING:
     case JSON_UNPARSED:
-      if (_content.asString) Polyfills::parseFloat(_content.asString, &value);
-      break;
+      return _content.asString
+                 ? Polyfills::parseFloat<JsonFloat>(_content.asString)
+                 : 0;
     default:
-      value = _content.asFloat;
-      break;
+      return _content.asFloat;
   }
-  return value;
 }
 
 inline bool JsonVariant::isBoolean() const {
@@ -150,8 +146,7 @@ inline bool JsonVariant::isFloat() const {
 
   if (_type != JSON_UNPARSED || _content.asString == NULL) return false;
 
-  JsonFloat dummy;
-  return Polyfills::parseFloat(_content.asString, &dummy) && !is<long>();
+  return Polyfills::isFloat(_content.asString);
 }
 
 #if ARDUINOJSON_ENABLE_STD_STREAM

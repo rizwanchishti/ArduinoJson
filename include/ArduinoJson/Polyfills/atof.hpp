@@ -40,7 +40,7 @@ TResult make_float(TMantissa mantissa, TExponent exponent) {
 }
 
 template <typename T>
-inline bool parseFloat(const char* s, T* result) {
+inline T parseFloat(const char* s) {
   typedef typename TypeTraits::sint<sizeof(T)>::type mantissa_t;
   typedef typename TypeTraits::sint<sizeof(T) / 4>::type exponent_t;
 
@@ -52,10 +52,7 @@ inline bool parseFloat(const char* s, T* result) {
       s++;
   }
 
-  if (!strcmp(s, "NaN")) {
-    *result = Polyfills::nan<T>();
-    return true;
-  }
+  if (!strcmp(s, "NaN")) return Polyfills::nan<T>();
 
   mantissa_t mantissa = 0;
   exponent_t exponent = 0;
@@ -102,7 +99,42 @@ inline bool parseFloat(const char* s, T* result) {
     }
   }
 
-  *result = make_float<T>(mantissa, exponent);
+  return make_float<T>(mantissa, exponent);
+}
+
+inline bool isFloat(const char* s) {
+  switch (*s) {
+    case '-':
+    case '+':
+      s++;
+  }
+
+  if (!strcmp(s, "NaN")) return true;
+
+  while ('0' <= *s && *s <= '9') {
+    s++;
+  }
+
+  if (*s == '.') {
+    s++;
+    while ('0' <= *s && *s <= '9') {
+      s++;
+    }
+  }
+
+  if (*s == 'e' || *s == 'E') {
+    s++;
+    if (*s == '-') {
+      s++;
+    } else if (*s == '+') {
+      s++;
+    }
+
+    while ('0' <= *s && *s <= '9') {
+      s++;
+    }
+  }
+
   return *s == '\0';
 }
 
