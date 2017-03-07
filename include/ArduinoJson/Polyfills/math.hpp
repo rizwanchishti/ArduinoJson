@@ -26,8 +26,18 @@ bool isInfinity(T x) {
 }
 
 template <typename T>
-T nan() {
-  return 0 / .0;
+T nan();
+
+template <>
+inline float nan<float>() {
+  unsigned long nan = 0xffffffff;
+  return *(float*)&nan;
+}
+
+template <>
+inline double nan<double>() {
+  unsigned long nan[2] = {0xffffffff, 0x7fffffff};
+  return *(double*)nan;
 }
 }
 }
