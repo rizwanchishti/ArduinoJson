@@ -41,7 +41,7 @@ TResult make_float(TMantissa mantissa, TExponent exponent) {
 
 template <typename T>
 inline bool parseFloat(const char* s, T* result) {
-  typedef typename TypeTraits::uint<sizeof(T)>::type mantissa_t;
+  typedef typename TypeTraits::sint<sizeof(T)>::type mantissa_t;
   typedef typename TypeTraits::sint<sizeof(T) / 4>::type exponent_t;
 
   bool negative_result = false;
@@ -77,6 +77,8 @@ inline bool parseFloat(const char* s, T* result) {
     }
   }
 
+  if (negative_result) mantissa = -mantissa;
+
   if (*s == 'e' || *s == 'E') {
     s++;
     exponent_t accumulator = 0;
@@ -101,8 +103,6 @@ inline bool parseFloat(const char* s, T* result) {
   }
 
   *result = make_float<T>(mantissa, exponent);
-  if (negative_result) *result = -*result;
-
   return *s == '\0';
 }
 
