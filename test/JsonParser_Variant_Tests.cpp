@@ -42,7 +42,7 @@ class JsonParser_Variant_Tests : public testing::Test {
 
   template <typename T>
   void resultTypeMustBe() {
-    EXPECT_TRUE(_result.is<T>());
+    EXPECT_TRUE(_result.is<T>()) << _jsonString;
   }
 
   void resultMustBeInvalid() {
@@ -99,7 +99,7 @@ TEST_F(JsonParser_Variant_Tests, Double) {
   verify<double>("1.7976931348623157e+308", 1.7976931348623157e+308);
   verify<double>("0.017976931348623157e+310", 0.017976931348623157e+310);
   verify<double>("0.00000000000000000000000000000001", 1e-32);
-  verify<double>("100000000000000000000000000000000", 1e+32);
+  verify<double>("100000000000000000000000000000000.0", 1e+32);
   verify<double>("NaN", NAN);
   /* verify<double>("Infinity", INF);
     verify<double>("+Infinity", INF);

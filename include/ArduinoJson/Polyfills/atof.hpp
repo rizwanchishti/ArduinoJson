@@ -14,10 +14,6 @@ namespace Polyfills {
 
 #if ARDUINOJSON_REPLACE_ATOF
 
-#ifdef _MSC_VER
-#define strcasecmp stricmp
-#endif
-
 template <typename TResult, typename TMantissa, typename TExponent>
 TResult make_float(TMantissa mantissa, TExponent exponent) {
   TResult table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
@@ -102,50 +98,47 @@ inline T parseFloat(const char* s) {
   return make_float<T>(mantissa, exponent);
 }
 
-inline bool isFloat(const char* s) {
-  switch (*s) {
-    case '-':
-    case '+':
-      s++;
-  }
+inline bool isdigit(char c) {
+  return '0' <= c && c <= '9';
+}
 
+inline bool isFloat(const char* s) {
+  if (*s == '-' || *s == '+') s++;
   if (!strcmp(s, "NaN")) return true;
 
-  while ('0' <= *s && *s <= '9') {
+  while (isdigit(*s)) s++;
+
+  bool has_dot = *s == '.';
+
+  if (has_dot) {
     s++;
+    while (isdigit(*s)) s++;
   }
 
-  if (*s == '.') {
+  bool has_exponent = *s == 'e' || *s == 'E';
+
+  if (has_exponent) {
     s++;
-    while ('0' <= *s && *s <= '9') {
-      s++;
-    }
+    if (*s == '-' || *s == '+') s++;
+    while (isdigit(*s)) s++;
   }
 
-  if (*s == 'e' || *s == 'E') {
-    s++;
-    if (*s == '-') {
-      s++;
-    } else if (*s == '+') {
-      s++;
-    }
-
-    while ('0' <= *s && *s <= '9') {
-      s++;
-    }
-  }
-
-  return *s == '\0';
+  return (has_dot || has_exponent) && *s == '\0';
 }
 
 #else
 
-template <typename T>
-inline bool parseFloat(const char *input, double *result) {
+inline bool isFloat(const char *input) {
   char *end;
   errno = 0;
-  strtod(_content.asString, &end);
+  strtod(input, &end);
   return *end == '\0' && errno == 0;
+}
+
+template <typename T>
+inline T parseFloat(const char *input) {
+  char *end;
+  return strtod(input, &end);
 }
 
 #endif
