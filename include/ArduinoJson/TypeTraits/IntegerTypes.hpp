@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <stdint.h>
+
 namespace ArduinoJson {
 namespace TypeTraits {
 

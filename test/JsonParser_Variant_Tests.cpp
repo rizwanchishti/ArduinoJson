@@ -8,7 +8,7 @@
 #include <ArduinoJson.h>
 #include <gtest/gtest.h>
 
-class JsonParser_Variant_Tests : public testing::Test {
+class JsonParser_Variant_Test : public testing::Test {
  protected:
   void whenInputIs(const char* jsonString) {
     strcpy(_jsonString, jsonString);
@@ -24,25 +24,13 @@ class JsonParser_Variant_Tests : public testing::Test {
     EXPECT_STREQ(expected, _result.as<char*>());
   }
 
-  void resultMustEqual(float expected) {
-    float actual = _result.as<float>();
-    if (expected != expected)
-      EXPECT_TRUE(actual != actual);
-    else
-      EXPECT_FLOAT_EQ(expected, actual);
-  }
-
   void resultMustEqual(double expected) {
-    double actual = _result.as<double>();
-    if (expected != expected)
-      EXPECT_TRUE(actual != actual);
-    else
-      EXPECT_DOUBLE_EQ(expected, actual);
+    EXPECT_DOUBLE_EQ(expected, _result.as<double>());
   }
 
   template <typename T>
   void resultTypeMustBe() {
-    EXPECT_TRUE(_result.is<T>()) << _jsonString;
+    EXPECT_TRUE(_result.is<T>());
   }
 
   void resultMustBeInvalid() {
@@ -66,76 +54,50 @@ class JsonParser_Variant_Tests : public testing::Test {
   char _jsonString[256];
 };
 
-TEST_F(JsonParser_Variant_Tests, EmptyObject) {
+TEST_F(JsonParser_Variant_Test, EmptyObject) {
   whenInputIs("{}");
   resultMustBeValid();
   resultTypeMustBe<JsonObject>();
 }
 
-TEST_F(JsonParser_Variant_Tests, EmptyArray) {
+TEST_F(JsonParser_Variant_Test, EmptyArray) {
   whenInputIs("[]");
   resultMustBeValid();
   resultTypeMustBe<JsonArray>();
 }
 
-TEST_F(JsonParser_Variant_Tests, Integer) {
+TEST_F(JsonParser_Variant_Test, Integer) {
   verify("42", 42);
   verify("-42", -42);
 }
 
-TEST_F(JsonParser_Variant_Tests, Double) {
-  verify<double>("3.14", 3.14);
-  verify<double>("-3.14", -3.14);
-  verify<double>("+3.14", +3.14);
-  verify<double>("1E+10", 1E+10);
-  verify<double>("-1E+10", -1E+10);
-  verify<double>("1.234E10", 1.234E10);
-  verify<double>("1.234E+10", 1.234E+10);
-  verify<double>("1.79769e308", 1.79769e308);
-  verify<double>("+1.79769e+308", +1.79769e+308);
-  verify<double>("-1.79769e-308", -1.79769e-308);
-  verify<double>("1.7976931348623157", 1.7976931348623157);
-  verify<double>("1.7976931348623157e308", 1.7976931348623157e308);
-  verify<double>("1.7976931348623157e+308", 1.7976931348623157e+308);
-  verify<double>("0.017976931348623157e+310", 0.017976931348623157e+310);
-  verify<double>("0.00000000000000000000000000000001", 1e-32);
-  verify<double>("100000000000000000000000000000000.0", 1e+32);
-  verify<double>("NaN", NAN);
-  /* verify<double>("Infinity", INF);
-    verify<double>("+Infinity", INF);
-    verify<double>("-Infinity", -INF);*/
+TEST_F(JsonParser_Variant_Test, Double) {
+  verify("3.14", 3.14);
+  verify("3.14", 3.14);
+  verify("1E+10", 1E+10);
+  verify("-1E+10", -1E+10);
+  verify("1.234E+10", 1.234E+10);
+  verify("1.79769e+308", 1.79769e+308);
+  verify("-1.79769e+308", -1.79769e+308);
+  verify("1.7976931348623157e+308", 1.7976931348623157e+308);
+  verify("0.017976931348623157e+310", 0.017976931348623157e+310);
 }
 
-TEST_F(JsonParser_Variant_Tests, Float) {
-  verify<float>("3.14", 3.14f);
-  verify<float>("-3.14", -3.14f);
-  verify<float>("+3.14", +3.14f);
-  verify<float>("1E+10", 1E+10f);
-  verify<float>("-1E+10", -1E+10f);
-  verify<float>("1.234E10", 1.234E10f);
-  verify<float>("1.234E+10", 1.234E+10f);
-  verify<float>("1.175494e-38", 1.175494e-38f);  // min
-  verify<float>("-1.175494e-38", -1.175494e-38f);
-  verify<float>("3.402823e+38", 3.402823e+38f);  // max
-  verify<float>("-3.402823e+38", -3.402823e+38f);
-  verify<float>("NaN", NAN);
-}
-
-TEST_F(JsonParser_Variant_Tests, String) {
+TEST_F(JsonParser_Variant_Test, String) {
   verify("\"hello world\"", "hello world");
 }
 
-TEST_F(JsonParser_Variant_Tests, True) {
+TEST_F(JsonParser_Variant_Test, True) {
   verify("true", true);
   verify("false", false);
 }
 
-TEST_F(JsonParser_Variant_Tests, OpenBrace) {
+TEST_F(JsonParser_Variant_Test, OpenBrace) {
   whenInputIs("{");
   resultMustBeInvalid();
 }
 
-TEST_F(JsonParser_Variant_Tests, IncompleteStrings) {
+TEST_F(JsonParser_Variant_Test, IncompleteStrings) {
   verify("\"", "");
   verify("\"hello", "hello");
   verify("\'", "");

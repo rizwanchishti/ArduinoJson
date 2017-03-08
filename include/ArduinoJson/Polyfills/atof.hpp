@@ -8,26 +8,54 @@
 #pragma once
 
 #include "../TypeTraits/IntegerTypes.hpp"
+#include "./math.hpp"
 
 namespace ArduinoJson {
 namespace Polyfills {
 
 #if ARDUINOJSON_REPLACE_ATOF
 
+template <typename T, size_t = sizeof(T)>
+struct FloatTraits {};
+
+template <typename T>
+struct FloatTraits<T, 8 /*64bits*/> {
+  static const short mantissa_bits = 52;
+  static const int64_t mantissa_max =
+      (static_cast<int64_t>(1) << mantissa_bits) - 1;
+
+  static T binary_exponentiation(uint8_t i) {
+    T table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
+    return table[i];
+  }
+};
+
+template <typename T>
+struct FloatTraits<T, 4 /*32bits*/> {
+  static const short mantissa_bits = 23;
+  static const int32_t mantissa_max = (1U << mantissa_bits) - 1;
+
+  static T binary_exponentiation(uint8_t i) {
+    T table[] = {1e1f, 1e2f, 1e4f, 1e8f, 1e16f, 1e32f};
+    return table[i];
+  }
+};
+
 template <typename TResult, typename TMantissa, typename TExponent>
 TResult make_float(TMantissa mantissa, TExponent exponent) {
-  TResult table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
   TResult result = static_cast<TResult>(mantissa);
 
   if (exponent >= 0) {
     for (uint8_t i = 0; exponent > 0 && i < 9; i++) {
-      if (exponent & 1) result *= table[i];
+      if (exponent & 1)
+        result *= FloatTraits<TResult>::binary_exponentiation(i);
       exponent = static_cast<TExponent>(exponent >> 1);
     }
   } else {
     exponent = static_cast<TExponent>(-exponent);
     for (uint8_t i = 0; exponent > 0 && i < 9; i++) {
-      if (exponent & 1) result /= table[i];
+      if (exponent & 1)
+        result /= FloatTraits<TResult>::binary_exponentiation(i);
       exponent = static_cast<TExponent>(exponent >> 1);
     }
   }
@@ -54,7 +82,7 @@ inline T parseFloat(const char* s) {
   exponent_t exponent = 0;
 
   while ('0' <= *s && *s <= '9') {
-    if (mantissa < 1e12)
+    if (mantissa < FloatTraits<T>::mantissa_max / 10)
       mantissa = mantissa * 10UL + (*s - '0');
     else
       exponent++;
