@@ -6,7 +6,7 @@
 // If you like this project, please add a star!
 
 #include <gtest/gtest.h>
-#include <ArduinoJson/Polyfills/atof.hpp>
+#include <ArduinoJson/Polyfills/parseFloat.hpp>
 
 using namespace ArduinoJson::Polyfills;
 

@@ -131,33 +131,5 @@ inline T parseFloat(const char* s) {
 
   return make_float<T>(mantissa, exponent);
 }
-
-inline bool isdigit(char c) {
-  return '0' <= c && c <= '9';
-}
-
-inline bool isFloat(const char* s) {
-  if (*s == '-' || *s == '+') s++;
-  if (!strcmp(s, "NaN")) return true;
-
-  while (isdigit(*s)) s++;
-
-  bool has_dot = *s == '.';
-
-  if (has_dot) {
-    s++;
-    while (isdigit(*s)) s++;
-  }
-
-  bool has_exponent = *s == 'e' || *s == 'E';
-
-  if (has_exponent) {
-    s++;
-    if (*s == '-' || *s == '+') s++;
-    while (isdigit(*s)) s++;
-  }
-
-  return (has_dot || has_exponent) && *s == '\0';
-}
 }
 }
