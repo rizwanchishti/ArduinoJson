@@ -11,8 +11,9 @@
 #include "JsonArray.hpp"
 #include "JsonObject.hpp"
 #include "JsonVariant.hpp"
-#include "Polyfills/atof.hpp"
 #include "Polyfills/atoi.hpp"
+#include "Polyfills/isFloat.hpp"
+#include "Polyfills/parseFloat.hpp"
 
 #include <errno.h>   // for errno
 #include <stdlib.h>  // for strtol, strtod

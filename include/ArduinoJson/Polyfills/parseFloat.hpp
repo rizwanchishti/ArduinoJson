@@ -8,6 +8,7 @@
 #pragma once
 
 #include "../TypeTraits/IntegerTypes.hpp"
+#include "./ctype.hpp"
 #include "./math.hpp"
 
 namespace ArduinoJson {
@@ -16,6 +17,7 @@ namespace Polyfills {
 template <typename T, size_t = sizeof(T)>
 struct FloatTraits {};
 
+#ifndef ARDUINO_ARCH_AVR  // double is 32 bits, so 1e64 gives a warning
 template <typename T>
 struct FloatTraits<T, 8 /*64bits*/> {
   typedef int64_t mantissa_type;
@@ -30,6 +32,7 @@ struct FloatTraits<T, 8 /*64bits*/> {
     return table[i];
   }
 };
+#endif
 
 template <typename T>
 struct FloatTraits<T, 4 /*32bits*/> {
@@ -85,7 +88,7 @@ inline T parseFloat(const char* s) {
   mantissa_t mantissa = 0;
   exponent_t exponent = 0;
 
-  while ('0' <= *s && *s <= '9') {
+  while (isdigit(*s)) {
     if (mantissa < FloatTraits<T>::mantissa_max / 10)
       mantissa = mantissa * 10 + (*s - '0');
     else
@@ -95,7 +98,7 @@ inline T parseFloat(const char* s) {
 
   if (*s == '.') {
     s++;
-    while ('0' <= *s && *s <= '9') {
+    while (isdigit(*s)) {
       if (mantissa < FloatTraits<T>::mantissa_max / 10) {
         mantissa = mantissa * 10 + (*s - '0');
         exponent--;
@@ -117,7 +120,7 @@ inline T parseFloat(const char* s) {
       s++;
     }
 
-    while ('0' <= *s && *s <= '9') {
+    while (isdigit(*s)) {
       accumulator = static_cast<exponent_t>(accumulator * 10 + (*s - '0'));
       s++;
     }
