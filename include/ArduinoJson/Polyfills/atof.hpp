@@ -13,16 +13,17 @@
 namespace ArduinoJson {
 namespace Polyfills {
 
-#if ARDUINOJSON_REPLACE_ATOF
-
 template <typename T, size_t = sizeof(T)>
 struct FloatTraits {};
 
 template <typename T>
 struct FloatTraits<T, 8 /*64bits*/> {
+  typedef int64_t mantissa_type;
   static const short mantissa_bits = 52;
-  static const int64_t mantissa_max =
-      (static_cast<int64_t>(1) << mantissa_bits) - 1;
+  static const mantissa_type mantissa_max =
+      (static_cast<mantissa_type>(1) << mantissa_bits) - 1;
+
+  typedef int16_t exponent_type;
 
   static T binary_exponentiation(uint8_t i) {
     T table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
@@ -32,8 +33,11 @@ struct FloatTraits<T, 8 /*64bits*/> {
 
 template <typename T>
 struct FloatTraits<T, 4 /*32bits*/> {
+  typedef int32_t mantissa_type;
   static const short mantissa_bits = 23;
-  static const int32_t mantissa_max = (1U << mantissa_bits) - 1;
+  static const mantissa_type mantissa_max = (1 << mantissa_bits) - 1;
+
+  typedef int8_t exponent_type;
 
   static T binary_exponentiation(uint8_t i) {
     T table[] = {1e1f, 1e2f, 1e4f, 1e8f, 1e16f, 1e32f};
@@ -65,8 +69,8 @@ TResult make_float(TMantissa mantissa, TExponent exponent) {
 
 template <typename T>
 inline T parseFloat(const char* s) {
-  typedef typename TypeTraits::sint<sizeof(T)>::type mantissa_t;
-  typedef typename TypeTraits::sint<sizeof(T) / 4>::type exponent_t;
+  typedef typename FloatTraits<T>::mantissa_type mantissa_t;
+  typedef typename FloatTraits<T>::exponent_type exponent_t;
 
   bool negative_result = false;
   switch (*s) {
@@ -76,7 +80,7 @@ inline T parseFloat(const char* s) {
       s++;
   }
 
-  if (!strcmp(s, "NaN")) return Polyfills::nan<T>();
+  if (*s == 'n' || *s == 'N') return Polyfills::nan<T>();
 
   mantissa_t mantissa = 0;
   exponent_t exponent = 0;
@@ -155,22 +159,5 @@ inline bool isFloat(const char* s) {
 
   return (has_dot || has_exponent) && *s == '\0';
 }
-
-#else
-
-inline bool isFloat(const char *input) {
-  char *end;
-  errno = 0;
-  strtod(input, &end);
-  return *end == '\0' && errno == 0;
-}
-
-template <typename T>
-inline T parseFloat(const char *input) {
-  char *end;
-  return strtod(input, &end);
-}
-
-#endif
 }
 }
