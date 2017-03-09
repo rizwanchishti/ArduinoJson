@@ -83,7 +83,7 @@ inline T parseFloat(const char* s) {
 
   while ('0' <= *s && *s <= '9') {
     if (mantissa < FloatTraits<T>::mantissa_max / 10)
-      mantissa = mantissa * 10UL + (*s - '0');
+      mantissa = mantissa * 10 + (*s - '0');
     else
       exponent++;
     s++;
@@ -92,9 +92,11 @@ inline T parseFloat(const char* s) {
   if (*s == '.') {
     s++;
     while ('0' <= *s && *s <= '9') {
-      mantissa = mantissa * 10 + (*s - '0');
+      if (mantissa < FloatTraits<T>::mantissa_max / 10) {
+        mantissa = mantissa * 10 + (*s - '0');
+        exponent--;
+      }
       s++;
-      exponent--;
     }
   }
 
