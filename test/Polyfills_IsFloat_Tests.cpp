@@ -12,7 +12,7 @@ using namespace ArduinoJson::Polyfills;
 
 struct Polyfills_IsFloat_Tests : testing::Test {
   void check(bool expected, const char* input) {
-    float actual = isFloat(input);
+    bool actual = isFloat(input);
     EXPECT_EQ(expected, actual) << input;
   }
 };
