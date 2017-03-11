@@ -20,6 +20,15 @@ struct Polyfills_ParseFloat_Float_Tests : testing::Test {
     float result = parseFloat<float>(input);
     EXPECT_TRUE(result != result) << input;
   }
+
+  void checkInf(const char* input, bool negative) {
+    float x = parseFloat<float>(input);
+    if (negative)
+      EXPECT_TRUE(x < 0) << input;
+    else
+      EXPECT_TRUE(x > 0) << input;
+    EXPECT_TRUE(x == x && x * 2 == x) << input;
+  }
 };
 #define TEST_FLOAT(X) TEST_F(Polyfills_ParseFloat_Float_Tests, X)
 
@@ -80,8 +89,19 @@ TEST_FLOAT(VeryLong) {
 
 TEST_DOUBLE(NaN) {
   checkNaN("NaN");
+  checkNaN("nan");
 }
 
 TEST_FLOAT(NaN) {
   checkNaN("NaN");
+  checkNaN("nan");
+}
+
+TEST_FLOAT(Infinity) {
+  checkInf("Infinity", false);
+  checkInf("+Infinity", false);
+  checkInf("-Infinity", true);
+  checkInf("inf", false);
+  checkInf("+inf", false);
+  checkInf("-inf", true);
 }

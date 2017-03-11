@@ -38,7 +38,8 @@ template <typename T>
 struct FloatTraits<T, 4 /*32bits*/> {
   typedef int32_t mantissa_type;
   static const short mantissa_bits = 23;
-  static const mantissa_type mantissa_max = (1 << mantissa_bits) - 1;
+  static const mantissa_type mantissa_max =
+      (static_cast<mantissa_type>(1) << mantissa_bits) - 1;
 
   typedef int8_t exponent_type;
 
@@ -84,6 +85,8 @@ inline T parseFloat(const char* s) {
   }
 
   if (*s == 'n' || *s == 'N') return Polyfills::nan<T>();
+  if (*s == 'i' || *s == 'I')
+    return negative_result ? -Polyfills::inf<T>() : Polyfills::inf<T>();
 
   mantissa_t mantissa = 0;
   exponent_t exponent = 0;
