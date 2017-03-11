@@ -68,4 +68,14 @@ TEST_(NaN) {
   check(false, "n");
   check(false, "N");
   check(false, "nan");
+  check(false, "-NaN");
+  check(false, "+NaN");
+}
+
+TEST_(Infinity) {
+  check(true, "Infinity");
+  check(true, "+Infinity");
+  check(true, "-Infinity");
+  check(false, "infinity");
+  check(false, "Inf");
 }

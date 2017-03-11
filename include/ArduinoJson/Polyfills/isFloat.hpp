@@ -15,8 +15,9 @@ namespace ArduinoJson {
 namespace Polyfills {
 
 inline bool isFloat(const char* s) {
-  if (issign(*s)) s++;
   if (!strcmp(s, "NaN")) return true;
+  if (issign(*s)) s++;
+  if (!strcmp(s, "Infinity")) return true;
 
   while (isdigit(*s)) s++;
 
