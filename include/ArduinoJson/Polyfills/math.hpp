@@ -40,6 +40,9 @@ inline double nan<double>() {
   return *(double*)nan;
 }
 
+template <typename T>
+T inf();
+
 template <>
 inline float inf<float>() {
   unsigned long inf = 0x7f800000;
@@ -131,12 +134,12 @@ inline bool isInfinity<float>(float x) {
 
 template <typename T>
 T nan() {
-  return NAN;
+  return static_cast<T>(NAN);
 }
 
 template <typename T>
 T inf() {
-  return INFINITY;
+  return static_cast<T>(INFINITY);
 }
 
 #if defined(__GNUC__)
