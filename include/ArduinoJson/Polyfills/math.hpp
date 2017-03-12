@@ -7,8 +7,8 @@
 
 #pragma once
 
-// If Visual Studo <= 2012
-#if defined(_MSC_VER) && _MSC_VER <= 1700
+// If Visual Studo <= 2013
+#if defined(_MSC_VER) && _MSC_VER <= 1800
 
 #include <float.h>
 #include <limits>
