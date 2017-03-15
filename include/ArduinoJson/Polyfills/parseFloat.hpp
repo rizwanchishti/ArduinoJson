@@ -75,8 +75,6 @@ inline T parseFloat(const char* s) {
     }
   }
 
-  if (negative_result) mantissa = -mantissa;
-
   if (*s == 'e' || *s == 'E') {
     s++;
     exponent_t accumulator = 0;
@@ -100,7 +98,11 @@ inline T parseFloat(const char* s) {
     }
   }
 
-  return make_float<T>(mantissa, exponent);
+  T result = make_float<T>(mantissa, exponent);
+
+  // For some reason, negating the result instead of the mantissa leads to much
+  // smaller code (74 bytes on AVR)
+  return negative_result ? -result : result;
 }
 }
 }
