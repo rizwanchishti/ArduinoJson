@@ -7,63 +7,27 @@
 
 #pragma once
 
-#include <stdint.h>
+#include "../TypeTraits/FloatTraits.hpp"
 #include "./ctype.hpp"
 #include "./math.hpp"
 
 namespace ArduinoJson {
 namespace Polyfills {
 
-template <typename T, size_t = sizeof(T)>
-struct FloatTraits {};
-
-#ifndef ARDUINO_ARCH_AVR  // double is 32 bits, so 1e64 gives a warning
-template <typename T>
-struct FloatTraits<T, 8 /*64bits*/> {
-  typedef int64_t mantissa_type;
-  static const short mantissa_bits = 52;
-  static const mantissa_type mantissa_max =
-      (static_cast<mantissa_type>(1) << mantissa_bits) - 1;
-
-  typedef int16_t exponent_type;
-
-  static T binary_exponentiation(uint8_t i) {
-    T table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
-    return table[i];
-  }
-};
-#endif
-
-template <typename T>
-struct FloatTraits<T, 4 /*32bits*/> {
-  typedef int32_t mantissa_type;
-  static const short mantissa_bits = 23;
-  static const mantissa_type mantissa_max =
-      (static_cast<mantissa_type>(1) << mantissa_bits) - 1;
-
-  typedef int8_t exponent_type;
-
-  static T binary_exponentiation(uint8_t i) {
-    T table[] = {1e1f, 1e2f, 1e4f, 1e8f, 1e16f, 1e32f};
-    return table[i];
-  }
-};
-
 template <typename TResult, typename TMantissa, typename TExponent>
 TResult make_float(TMantissa mantissa, TExponent exponent) {
+  typedef TypeTraits::FloatTraits<TResult> traits;
   TResult result = static_cast<TResult>(mantissa);
 
   if (exponent >= 0) {
     for (uint8_t i = 0; exponent > 0 && i < 9; i++) {
-      if (exponent & 1)
-        result *= FloatTraits<TResult>::binary_exponentiation(i);
+      if (exponent & 1) result *= traits::binary_exponentiation(i);
       exponent = static_cast<TExponent>(exponent >> 1);
     }
   } else {
     exponent = static_cast<TExponent>(-exponent);
     for (uint8_t i = 0; exponent > 0 && i < 9; i++) {
-      if (exponent & 1)
-        result /= FloatTraits<TResult>::binary_exponentiation(i);
+      if (exponent & 1) result /= traits::binary_exponentiation(i);
       exponent = static_cast<TExponent>(exponent >> 1);
     }
   }
@@ -73,8 +37,9 @@ TResult make_float(TMantissa mantissa, TExponent exponent) {
 
 template <typename T>
 inline T parseFloat(const char* s) {
-  typedef typename FloatTraits<T>::mantissa_type mantissa_t;
-  typedef typename FloatTraits<T>::exponent_type exponent_t;
+  typedef TypeTraits::FloatTraits<T> traits;
+  typedef typename traits::mantissa_type mantissa_t;
+  typedef typename traits::exponent_type exponent_t;
 
   bool negative_result = false;
   switch (*s) {
@@ -92,7 +57,7 @@ inline T parseFloat(const char* s) {
   exponent_t exponent = 0;
 
   while (isdigit(*s)) {
-    if (mantissa < FloatTraits<T>::mantissa_max / 10)
+    if (mantissa < traits::mantissa_max / 10)
       mantissa = mantissa * 10 + (*s - '0');
     else
       exponent++;
@@ -102,7 +67,7 @@ inline T parseFloat(const char* s) {
   if (*s == '.') {
     s++;
     while (isdigit(*s)) {
-      if (mantissa < FloatTraits<T>::mantissa_max / 10) {
+      if (mantissa < traits::mantissa_max / 10) {
         mantissa = mantissa * 10 + (*s - '0');
         exponent--;
       }
