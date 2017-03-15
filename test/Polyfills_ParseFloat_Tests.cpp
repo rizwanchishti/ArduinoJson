@@ -42,6 +42,15 @@ struct Polyfills_ParseFloat_Double_Tests : testing::Test {
     double result = parseFloat<double>(input);
     EXPECT_TRUE(result != result) << input;
   }
+
+  void checkInf(const char* input, bool negative) {
+    double x = parseFloat<double>(input);
+    if (negative)
+      EXPECT_TRUE(x < 0) << input;
+    else
+      EXPECT_TRUE(x > 0) << input;
+    EXPECT_TRUE(x == x && x * 2 == x) << input;
+  }
 };
 #define TEST_DOUBLE(X) TEST_F(Polyfills_ParseFloat_Double_Tests, X)
 
@@ -105,6 +114,20 @@ TEST_FLOAT(MantissaTooLongToFit) {
   check("-0.340282346638528861111111111111", -0.34028234663852886f);
   check("-34028234663852886.11111111111111", -34028234663852886.0f);
   check("-34028234.66385288611111111111111", -34028234.663852886f);
+}
+
+TEST_DOUBLE(ExponentTooBig) {
+  checkInf("1e309", false);
+  checkInf("-1e309", true);
+  checkInf("1e65535", false);
+  check("1e-65535", 0.0);
+}
+
+TEST_FLOAT(ExponentTooBig) {
+  checkInf("1e39", false);
+  checkInf("-1e39", true);
+  checkInf("1e255", false);
+  check("1e-255", 0.0f);
 }
 
 TEST_DOUBLE(NaN) {
