@@ -11,9 +11,9 @@
 #include "JsonArray.hpp"
 #include "JsonObject.hpp"
 #include "JsonVariant.hpp"
-#include "Polyfills/atoi.hpp"
 #include "Polyfills/isFloat.hpp"
 #include "Polyfills/parseFloat.hpp"
+#include "Polyfills/parseInteger.hpp"
 
 #include <errno.h>   // for errno
 #include <stdlib.h>  // for strtol, strtod
@@ -63,7 +63,7 @@ inline Internals::JsonInteger JsonVariant::variantAsInteger() const {
     case JSON_UNPARSED:
       if (!_content.asString) return 0;
       if (!strcmp("true", _content.asString)) return 1;
-      return Polyfills::atoi<JsonInteger>(_content.asString);
+      return Polyfills::parseInteger<JsonInteger>(_content.asString);
     default:
       return static_cast<JsonInteger>(_content.asFloat);
   }
@@ -82,7 +82,7 @@ inline Internals::JsonUInt JsonVariant::asUnsignedInteger() const {
     case JSON_UNPARSED:
       if (!_content.asString) return 0;
       if (!strcmp("true", _content.asString)) return 1;
-      return Polyfills::atoi<JsonUInt>(_content.asString);
+      return Polyfills::parseInteger<JsonUInt>(_content.asString);
     default:
       return static_cast<JsonUInt>(_content.asFloat);
   }

@@ -12,43 +12,43 @@
 namespace ArduinoJson {
 namespace Polyfills {
 template <typename T>
-T atoi(const char *s);
+T parseInteger(const char *s);
 
 template <>
-inline long atoi<long>(const char *s) {
+inline long parseInteger<long>(const char *s) {
   return ::strtol(s, NULL, 10);
 }
 
 template <>
-inline unsigned long atoi<unsigned long>(const char *s) {
+inline unsigned long parseInteger<unsigned long>(const char *s) {
   return ::strtoul(s, NULL, 10);
 }
 
 template <>
-inline int atoi<int>(const char *s) {
+inline int parseInteger<int>(const char *s) {
   return ::atoi(s);
 }
 
 #if ARDUINOJSON_USE_LONG_LONG
 template <>
-inline long long atoi<long long>(const char *s) {
+inline long long parseInteger<long long>(const char *s) {
   return ::strtoll(s, NULL, 10);
 }
 
 template <>
-inline unsigned long long atoi<unsigned long long>(const char *s) {
+inline unsigned long long parseInteger<unsigned long long>(const char *s) {
   return ::strtoull(s, NULL, 10);
 }
 #endif
 
 #if ARDUINOJSON_USE_INT64
 template <>
-inline __int64 atoi<__int64>(const char *s) {
+inline __int64 parseInteger<__int64>(const char *s) {
   return ::_strtoi64(s, NULL, 10);
 }
 
 template <>
-inline unsigned __int64 atoi<unsigned __int64>(const char *s) {
+inline unsigned __int64 parseInteger<unsigned __int64>(const char *s) {
   return ::_strtoui64(s, NULL, 10);
 }
 #endif
