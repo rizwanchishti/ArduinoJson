@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../TypeTraits/IntegerTypes.hpp"
+#include <stdint.h>
 #include "./ctype.hpp"
 #include "./math.hpp"
 
