@@ -14,14 +14,6 @@
 namespace ArduinoJson {
 namespace Polyfills {
 
-template <typename TResult, typename TMantissa, typename TExponent>
-TResult make_float(TMantissa mantissa, TExponent exponent) {
-  typedef TypeTraits::FloatTraits<TResult> traits;
-  TResult result = static_cast<TResult>(mantissa);
-
-  return result * traits::pow10(exponent);
-}
-
 template <typename T>
 inline T parseFloat(const char* s) {
   typedef TypeTraits::FloatTraits<T> traits;
@@ -85,7 +77,7 @@ inline T parseFloat(const char* s) {
     exponent = exponent_offset + accumulator;
   }
 
-  T result = make_float<T>(mantissa, exponent);
+  T result = traits::make_float(static_cast<T>(mantissa), exponent);
 
   // For some reason, negating the result instead of the mantissa leads to much
   // smaller code (74 bytes on AVR)
