@@ -30,6 +30,11 @@ struct FloatTraits<T, 8 /*64bits*/> {
     T table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
     return table[i];
   }
+
+  static T pow10(uint8_t i) {
+    T table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
+    return table[i];
+  }
 };
 #endif
 
