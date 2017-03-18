@@ -54,13 +54,13 @@ inline T parseFloat(const char* s) {
     return negative_result ? -Polyfills::inf<T>() : Polyfills::inf<T>();
 
   mantissa_t mantissa = 0;
-  exponent_t exponent = 0;
+  exponent_t exponent_offset = 0;
 
   while (isdigit(*s)) {
     if (mantissa < traits::mantissa_max / 10)
       mantissa = mantissa * 10 + (*s - '0');
     else
-      exponent++;
+      exponent_offset++;
     s++;
   }
 
@@ -69,32 +69,31 @@ inline T parseFloat(const char* s) {
     while (isdigit(*s)) {
       if (mantissa < traits::mantissa_max / 10) {
         mantissa = mantissa * 10 + (*s - '0');
-        exponent--;
+        exponent_offset--;
       }
       s++;
     }
   }
 
+  int exponent = exponent_offset;
   if (*s == 'e' || *s == 'E') {
     s++;
-    exponent_t accumulator = 0;
-    bool negative = false;
+    int accumulator = 0;
+    int sign = +1;
     if (*s == '-') {
-      negative = true;
+      sign = -1;
       s++;
     } else if (*s == '+') {
       s++;
     }
 
     while (isdigit(*s)) {
-      accumulator = static_cast<exponent_t>(accumulator * 10 + (*s - '0'));
+      accumulator = accumulator * 10 + sign * (*s - '0');
+      exponent = exponent_offset + accumulator;
+      if (exponent > traits::exponent_max)
+        return negative_result ? -Polyfills::inf<T>() : Polyfills::inf<T>();
+      if (exponent < -traits::exponent_max) return negative_result ? -0 : 0;
       s++;
-    }
-
-    if (negative) {
-      exponent = static_cast<exponent_t>(exponent - accumulator);
-    } else {
-      exponent = static_cast<exponent_t>(exponent + accumulator);
     }
   }
 
