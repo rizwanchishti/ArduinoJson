@@ -19,11 +19,7 @@ TResult make_float(TMantissa mantissa, TExponent exponent) {
   typedef TypeTraits::FloatTraits<TResult> traits;
   TResult result = static_cast<TResult>(mantissa);
 
-  if (exponent > 0) {
-    return result * traits::pow10(exponent);
-  } else {
-    return result / traits::pow10(-exponent);
-  }
+  return result * traits::pow10(exponent);
 }
 
 template <typename T>

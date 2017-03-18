@@ -28,9 +28,16 @@ struct FloatTraits<T, 8 /*64bits*/> {
 
   template <typename TExponent>
   static T pow10(TExponent i) {
-    return (i & 1 ? 1e1 : 1) * (i & 2 ? 1e2 : 1) * (i & 4 ? 1e4 : 1) *
-           (i & 8 ? 1e8 : 1) * (i & 16 ? 1e16 : 1) * (i & 32 ? 1e32 : 1) *
-           (i & 64 ? 1e64 : 1) * (i & 128 ? 1e128 : 1) * (i & 256 ? 1e256 : 1);
+    if (i >= 0)
+      return (i & 1 ? 1e1 : 1) * (i & 2 ? 1e2 : 1) * (i & 4 ? 1e4 : 1) *
+             (i & 8 ? 1e8 : 1) * (i & 16 ? 1e16 : 1) * (i & 32 ? 1e32 : 1) *
+             (i & 64 ? 1e64 : 1) * (i & 128 ? 1e128 : 1) *
+             (i & 256 ? 1e256 : 1);
+    i = -i;
+    return (i & 1 ? 1e-1 : 1) * (i & 2 ? 1e-2 : 1) * (i & 4 ? 1e-4 : 1) *
+           (i & 8 ? 1e-8 : 1) * (i & 16 ? 1e-16 : 1) * (i & 32 ? 1e-32 : 1) *
+           (i & 64 ? 1e-64 : 1) * (i & 128 ? 1e-128 : 1) *
+           (i & 256 ? 1e-256 : 1);
   }
 };
 #endif
@@ -47,8 +54,12 @@ struct FloatTraits<T, 4 /*32bits*/> {
 
   template <typename TExponent>
   static T pow10(TExponent i) {
-    return (i & 1 ? 1e1f : 1) * (i & 2 ? 1e2f : 1) * (i & 4 ? 1e4f : 1) *
-           (i & 8 ? 1e8f : 1) * (i & 16 ? 1e16f : 1) * (i & 32 ? 1e32f : 1);
+    if (i > 0)
+      return (i & 1 ? 1e1f : 1) * (i & 2 ? 1e2f : 1) * (i & 4 ? 1e4f : 1) *
+             (i & 8 ? 1e8f : 1) * (i & 16 ? 1e16f : 1) * (i & 32 ? 1e32f : 1);
+    i = -i;
+    return (i & 1 ? 1e-1f : 1) * (i & 2 ? 1e-2f : 1) * (i & 4 ? 1e-4f : 1) *
+           (i & 8 ? 1e-8f : 1) * (i & 16 ? 1e-16f : 1) * (i & 32 ? 1e-32f : 1);
   }
 };
 }
