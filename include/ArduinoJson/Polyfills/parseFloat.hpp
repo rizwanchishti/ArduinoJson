@@ -14,26 +14,15 @@
 namespace ArduinoJson {
 namespace Polyfills {
 
-template <typename TResult, typename TExponent>
-TResult pow10(TExponent exponent) {
-  typedef TypeTraits::FloatTraits<TResult> traits;
-  TResult result = 1;
-  for (uint8_t i = 0; exponent > 0 && i < 9; i++) {
-    if (exponent & 1) result *= traits::binary_exponentiation(i);
-    exponent >>= 1;
-  }
-  return result;
-}
-
 template <typename TResult, typename TMantissa, typename TExponent>
 TResult make_float(TMantissa mantissa, TExponent exponent) {
-  // typedef TypeTraits::FloatTraits<TResult> traits;
+  typedef TypeTraits::FloatTraits<TResult> traits;
   TResult result = static_cast<TResult>(mantissa);
 
   if (exponent > 0) {
-    return result * pow10<TResult>(exponent);
+    return result * traits::pow10(exponent);
   } else {
-    return result / pow10<TResult>(-exponent);
+    return result / traits::pow10(-exponent);
   }
 }
 

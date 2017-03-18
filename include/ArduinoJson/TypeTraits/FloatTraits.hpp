@@ -26,14 +26,11 @@ struct FloatTraits<T, 8 /*64bits*/> {
   typedef int16_t exponent_type;
   static const exponent_type exponent_max = 308;
 
-  static T binary_exponentiation(uint8_t i) {
-    T table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
-    return table[i];
-  }
-
-  static T pow10(uint8_t i) {
-    T table[] = {1e1, 1e2, 1e4, 1e8, 1e16, 1e32, 1e64, 1e128, 1e256};
-    return table[i];
+  template <typename TExponent>
+  static T pow10(TExponent i) {
+    return (i & 1 ? 1e1 : 1) * (i & 2 ? 1e2 : 1) * (i & 4 ? 1e4 : 1) *
+           (i & 8 ? 1e8 : 1) * (i & 16 ? 1e16 : 1) * (i & 32 ? 1e32 : 1) *
+           (i & 64 ? 1e64 : 1) * (i & 128 ? 1e128 : 1) * (i & 256 ? 1e256 : 1);
   }
 };
 #endif
@@ -48,9 +45,10 @@ struct FloatTraits<T, 4 /*32bits*/> {
   typedef int8_t exponent_type;
   static const exponent_type exponent_max = 38;
 
-  static T binary_exponentiation(uint8_t i) {
-    T table[] = {1e1f, 1e2f, 1e4f, 1e8f, 1e16f, 1e32f};
-    return table[i];
+  template <typename TExponent>
+  static T pow10(TExponent i) {
+    return (i & 1 ? 1e1f : 1) * (i & 2 ? 1e2f : 1) * (i & 4 ? 1e4f : 1) *
+           (i & 8 ? 1e8f : 1) * (i & 16 ? 1e16f : 1) * (i & 32 ? 1e32f : 1);
   }
 };
 }
