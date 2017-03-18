@@ -80,7 +80,7 @@ inline T parseFloat(const char* s) {
 
     while (isdigit(*s)) {
       accumulator = accumulator * 10 + sign * (*s - '0');
-      if (accumulator - exponent_offset > traits::exponent_max)
+      if (accumulator + exponent_offset > traits::exponent_max)
         return negative_result ? -Polyfills::inf<T>() : Polyfills::inf<T>();
       if (accumulator - exponent_offset < -traits::exponent_max)
         return negative_result ? -0 : 0;
