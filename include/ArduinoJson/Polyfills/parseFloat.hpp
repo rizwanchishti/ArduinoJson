@@ -80,12 +80,13 @@ inline T parseFloat(const char* s) {
 
     while (isdigit(*s)) {
       accumulator = accumulator * 10 + sign * (*s - '0');
-      exponent = exponent_offset + accumulator;
-      if (exponent > traits::exponent_max)
+      if (accumulator - exponent_offset > traits::exponent_max)
         return negative_result ? -Polyfills::inf<T>() : Polyfills::inf<T>();
-      if (exponent < -traits::exponent_max) return negative_result ? -0 : 0;
+      if (accumulator - exponent_offset < -traits::exponent_max)
+        return negative_result ? -0 : 0;
       s++;
     }
+    exponent = exponent_offset + accumulator;
   }
 
   T result = make_float<T>(mantissa, exponent);
