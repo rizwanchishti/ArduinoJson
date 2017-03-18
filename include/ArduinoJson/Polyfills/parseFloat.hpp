@@ -54,28 +54,30 @@ inline T parseFloat(const char* s) {
     }
   }
 
-  int exponent = exponent_offset;
+  int exponent = 0;
   if (*s == 'e' || *s == 'E') {
     s++;
-    int accumulator = 0;
-    int sign = +1;
+    bool negative_exponent = false;
     if (*s == '-') {
-      sign = -1;
+      negative_exponent = true;
       s++;
     } else if (*s == '+') {
       s++;
     }
 
     while (isdigit(*s)) {
-      accumulator = accumulator * 10 + sign * (*s - '0');
-      if (accumulator + exponent_offset > traits::exponent_max)
-        return negative_result ? -Polyfills::inf<T>() : Polyfills::inf<T>();
-      if (accumulator - exponent_offset < -traits::exponent_max)
-        return negative_result ? -0 : 0;
+      exponent = exponent * 10 + (*s - '0');
+      if (exponent + exponent_offset > traits::exponent_max) {
+        if (negative_exponent)
+          return negative_result ? -0 : 0;
+        else
+          return negative_result ? -Polyfills::inf<T>() : Polyfills::inf<T>();
+      }
       s++;
     }
-    exponent = exponent_offset + accumulator;
+    if (negative_exponent) exponent = -exponent;
   }
+  exponent += exponent_offset;
 
   T result = traits::make_float(static_cast<T>(mantissa), exponent);
 
